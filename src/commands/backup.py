@@ -25,6 +25,9 @@ async def backup_server(server: Config.Server, filename: Optional[str] = None) -
     server_path = config.servers[server].path
     archive_path = os.path.join(server_path, 'backups', filename)
 
+    print(server_path)
+    print(archive_path)
+
     try:
         await rcon(server.rcon.port, server.rcon.password, 'say Backing up the server. You may experience some lag...')
         await rcon(server.rcon.port, server.rcon.password, 'save-off')
