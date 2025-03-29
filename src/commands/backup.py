@@ -24,13 +24,19 @@ async def backup_server(server: Config.Server, filename: Optional[str] = None) -
     server_path = config.servers[server].path
     archive_path = os.path.join(server_path, 'backups', filename)
 
-    await rcon(server.rcon.port, server.rcon.password, 'say Backing up the server. You may experience some lag...')
-    await rcon(server.rcon.port, server.rcon.password, 'save-off')
-    await rcon(server.rcon.port, server.rcon.password, 'save-all flush')
+    try:
+        await rcon(server.rcon.port, server.rcon.password, 'say Backing up the server. You may experience some lag...')
+        await rcon(server.rcon.port, server.rcon.password, 'save-off')
+        await rcon(server.rcon.port, server.rcon.password, 'save-all flush')
+    except:
+        pass
 
     shutil.make_archive(archive_path, 'zip', os.path.join(server_path, 'world'))
 
-    await rcon(server.rcon.port, server.rcon.password, 'save-on')
+    try:
+        await rcon(server.rcon.port, server.rcon.password, 'save-on')
+    except:
+        pass
 
 
 # MARK: Command
