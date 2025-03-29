@@ -85,9 +85,13 @@ async def server(interaction: discord.Interaction, server: str,
 
         await interaction.response.send_message(embed=embed, ephemeral=True)
         return
+    
+    dt = datetime.now(timezone.utc)
+    archive_filename = (re.sub(r'\s+', '_', name) + '-'
+                        if name is not None else '') + timestamp(dt)
 
     try:
-        await backup_server(server, name)
+        await backup_server(server, archive_filename)
 
         embed = discord.Embed(
             description=f'Backed up all servers to \"{name}\".zip files')
