@@ -13,6 +13,7 @@ from discord.ext import commands
 import shutil
 from datetime import datetime, timezone
 import os.path
+from pathlib import Path
 import re
 from typing import List, Optional
 
@@ -31,7 +32,7 @@ async def backup_server(server: Config.Server, filename: Optional[str] = None) -
     except:
         pass
 
-    shutil.make_archive(archive_path, 'zip', os.path.join(server_path, 'world'))
+    shutil.make_archive(archive_path, 'zip', os.path.join(Path.home(), server_path), 'world')
 
     try:
         await rcon(server.rcon.port, server.rcon.password, 'save-on')
@@ -49,7 +50,7 @@ backup = app_commands.Group(name='backup', description='Backup server(s)')
 async def _(interaction: discord.Interaction, name: Optional[str]):
     dt = datetime.now(timezone.utc)
     archive_filename = (re.sub(r'\s+', '_', name) + '-'
-                        if name is not None else '') + timestamp(dt) + '.zip'
+                        if name is not None else '') + timestamp(dt)
 
     fail = []
 
