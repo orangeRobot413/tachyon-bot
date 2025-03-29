@@ -22,12 +22,7 @@ config = Config('config.json')
 
 # MARK: Backup Server
 async def backup_server(server: Config.Server, filename: Optional[str] = None) -> str:
-    print(2)
-
     archive_path = os.path.join(Path.home(), server.path, 'backups', filename)
-
-    print(server.path)
-    print(archive_path)
 
     try:
         await rcon(server.rcon.port, server.rcon.password, 'say Backing up the server. You may experience some lag...')
@@ -95,8 +90,6 @@ async def server(interaction: discord.Interaction, server: str,
                         if name is not None else '') + timestamp(dt)
 
     try:
-        print(1)
-
         await backup_server(config.servers[server], archive_filename)
 
         embed = discord.Embed(
