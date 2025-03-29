@@ -77,7 +77,10 @@ stop = app_commands.Group(name='stop', description='Stop Minecraft server(s)')
 @app_commands.checks.has_role(config.roles.admin)
 async def stop_all(interaction: discord.Interaction):
     for server in config.servers:
-        await kill_server(config.servers[server])
+        try:
+            await kill_server(config.servers[server])
+        except ConnectionRefusedError:
+            pass
     embed = discord.Embed(description='Stopped all servers')
     embed.set_footer(text=config.server_name)
     await interaction.response.send_message(embed=embed)
@@ -88,11 +91,17 @@ async def stop_all(interaction: discord.Interaction):
 @app_commands.describe(server='A Minecraft server')
 async def stop_server(interaction: discord.Interaction, server: str):
     if server in config.servers:
-        await kill_server(config.servers[server])
-        embed = discord.Embed(
-            description=f'Stopped {config.servers[server].name}')
-        embed.set_footer(text=config.server_name)
-        await interaction.response.send_message(embed=embed)
+        try:
+            await kill_server(config.servers[server])
+            embed = discord.Embed(
+                description=f'Stopped {config.servers[server].name}')
+            embed.set_footer(text=config.server_name)
+            await interaction.response.send_message(embed=embed)
+        except ConnectionRefusedError:
+            embed = discord.Embed(
+                description=f'Server not running')
+            embed.set_footer(text=config.server_name)
+            await interaction.response.send_message(embed=embed)
     else:
         embed = discord.Embed(description='Server not found')
         embed.set_footer(text=config.server_name)
