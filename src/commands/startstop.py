@@ -26,8 +26,8 @@ def start_orphan_server(server: Config.Server):
         '-jar', os.path.join(server.path, server.server_jar), '--nogui'
     ], close_fds=True)
 
-def kill_server(server: Config.Server):
-    rcon(server.rcon.port, server.rcon.password, "stop")
+async def kill_server(server: Config.Server):
+    await rcon(server.rcon.port, server.rcon.password, "stop")
 
 # MARK: Start Command
 start = app_commands.Group(name='start', description='Start Minecraft server(s)')
@@ -77,7 +77,7 @@ stop = app_commands.Group(name='stop', description='Stop Minecraft server(s)')
 @app_commands.checks.has_role(config.roles.admin)
 async def stop_all(interaction: discord.Interaction):
     for server in config.servers:
-        kill_server(config.servers[server])
+        await kill_server(config.servers[server])
     embed = discord.Embed(description='Stopped all servers')
     embed.set_footer(text=config.server_name)
     await interaction.response.send_message(embed=embed)
@@ -88,7 +88,7 @@ async def stop_all(interaction: discord.Interaction):
 @app_commands.describe(server='A Minecraft server')
 async def stop_server(interaction: discord.Interaction, server: str):
     if server in config.servers:
-        kill_server(config.servers[server])
+        await kill_server(config.servers[server])
         embed = discord.Embed(
             description=f'Stopped {config.servers[server].name}')
         embed.set_footer(text=config.server_name)
