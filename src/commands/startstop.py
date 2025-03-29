@@ -23,7 +23,7 @@ signal.signal(signal.SIGCHLD, signal.SIG_IGN)
 
 def start_orphan_server(server: Config.Server):
     subprocess.Popen([
-        'java', f'-Xms{server.ram}M', f'-Xmx{server.ram}M', '-XX:+UseZGC',
+        'java', f'-Xms{server.ram}M', f'-Xmx{server.ram}M', *server.flags,
         '-jar', os.path.join(Path.home(), server.path, server.server_jar), '--nogui'
     ], close_fds=True)
 

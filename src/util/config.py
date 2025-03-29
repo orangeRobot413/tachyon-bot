@@ -53,7 +53,7 @@ class Config:
     class Server:
         '''The metadata for a minecraft server'''
 
-        def __init__(self, *, name: str, path: str, server_jar: str, rcon_port: int, rcon_pass: str, ram: int,
+        def __init__(self, *, name: str, path: str, server_jar: str, flags: list[str], rcon_port: int, rcon_pass: str, ram: int,
                      **kwargs):
             '''
             Initialize a `Server` object.
@@ -71,6 +71,9 @@ class Config:
 
             self.server_jar = str(server_jar)
             '''The filename of the server jar'''
+
+            self.flags = [str(flag) for flag in flags]
+            '''Additional JVM flags for server'''
 
             self.rcon = Config.Server.Rcon(port=int(rcon_port), password=str(rcon_pass))
             '''The server's RCON configuration'''
