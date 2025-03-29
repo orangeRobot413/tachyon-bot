@@ -22,7 +22,7 @@ async def worldsize(interaction: discord.Interaction, server: Optional[str]):
     if server is None:
         embed = discord.Embed(title='World Sizes', description='')
         for server in servers:
-            embed.description += f'**{servers[server]['name']}:** {format_file_size(get_file_size(servers[server]['path']))}\n'
+            embed.description += f'**{servers[server]["name"]}:** {format_file_size(get_file_size(servers[server]["path"]))}\n'
         embed.set_footer(text=server_name)
         await interaction.response.send_message(embed=embed)
         return
