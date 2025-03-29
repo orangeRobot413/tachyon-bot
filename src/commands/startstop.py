@@ -21,11 +21,22 @@ config = Config('config.json')
 signal.signal(signal.SIGCHLD, signal.SIG_IGN)
 
 
-def start_orphan_server(server: Config.Server):
+def start_orphan_server(id: str, server: Config.Server):
+    subprocess.Popen(['screen', '-D', '-R', '-S', id])
+    subprocess.Popen(['screen', '-D', id])
     subprocess.Popen([
-        'java', f'-Xms{server.ram}M', f'-Xmx{server.ram}M', *server.flags,
-        '-jar', os.path.join(Path.home(), server.path, server.server_jar), '--nogui'
-    ], close_fds=True, cwd=os.path.join(Path.home(), server.path))
+        'screen', '-S', id, '-X', 'stuff',
+        f'cd {os.path.join(Path.home(), server.path)}'
+    ])
+    subprocess.Popen([
+        'screen', '-S', id, '-X', 'stuff',
+        f'java -Xms{server.ram}M -Xmx{server.ram}M {" ".join(server.flags)} ' +
+        f'-jar {server.server_jar} --nogui'
+    ])
+    # subprocess.Popen([
+    #     'java', f'-Xms{server.ram}M', f'-Xmx{server.ram}M', *server.flags,
+    #     '-jar', os.path.join(Path.home(), server.path, server.server_jar), '--nogui'
+    # ], close_fds=True, cwd=os.path.join(Path.home(), server.path))
 
 async def kill_server(server: Config.Server):
     await rcon(server.rcon.port, server.rcon.password, "stop")
@@ -38,7 +49,7 @@ start = app_commands.Group(name='start', description='Start Minecraft server(s)'
 @app_commands.checks.has_role(config.roles.admin)
 async def start_all(interaction: discord.Interaction):
     for server in config.servers:
-        start_orphan_server(config.servers[server])
+        start_orphan_server(server, config.servers[server])
     embed = discord.Embed(description='Started all servers')
     embed.set_footer(text=config.server_name)
     await interaction.response.send_message(embed=embed)
@@ -49,7 +60,7 @@ async def start_all(interaction: discord.Interaction):
 @app_commands.describe(server='A Minecraft server')
 async def start_server(interaction: discord.Interaction, server: str):
     if server in config.servers:
-        start_orphan_server(config.servers[server])
+        start_orphan_server(server, config.servers[server])
         embed = discord.Embed(
             description=f'Started {config.servers[server].name}')
         embed.set_footer(text=config.server_name)
