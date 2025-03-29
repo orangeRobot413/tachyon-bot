@@ -23,7 +23,7 @@ config = Config('config.json')
 # MARK: Backup Server
 async def backup_server(server: Config.Server, filename: Optional[str] = None) -> str:
     server_path = config.servers[server].path
-    archive_path = os.path.join(server_path, 'backups', filename)
+    archive_path = os.path.join(Path.home(), server_path, 'backups', filename)
 
     print(server_path)
     print(archive_path)
