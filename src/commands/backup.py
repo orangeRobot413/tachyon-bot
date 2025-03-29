@@ -24,10 +24,9 @@ config = Config('config.json')
 async def backup_server(server: Config.Server, filename: Optional[str] = None) -> str:
     print(2)
 
-    server_path = config.servers[server].path
-    archive_path = os.path.join(Path.home(), server_path, 'backups', filename)
+    archive_path = os.path.join(Path.home(), server.path, 'backups', filename)
 
-    print(server_path)
+    print(server.path)
     print(archive_path)
 
     try:
@@ -37,7 +36,7 @@ async def backup_server(server: Config.Server, filename: Optional[str] = None) -
     except:
         pass
 
-    shutil.make_archive(archive_path, 'zip', os.path.join(Path.home(), server_path), 'world')
+    shutil.make_archive(archive_path, 'zip', os.path.join(Path.home(), server.path), 'world')
 
     try:
         await rcon(server.rcon.port, server.rcon.password, 'save-on')
