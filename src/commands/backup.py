@@ -22,6 +22,8 @@ config = Config('config.json')
 
 # MARK: Backup Server
 async def backup_server(server: Config.Server, filename: Optional[str] = None) -> str:
+    print(2)
+
     server_path = config.servers[server].path
     archive_path = os.path.join(Path.home(), server_path, 'backups', filename)
 
@@ -94,6 +96,8 @@ async def server(interaction: discord.Interaction, server: str,
                         if name is not None else '') + timestamp(dt)
 
     try:
+        print(1)
+
         await backup_server(config.servers[server], archive_filename)
 
         embed = discord.Embed(
