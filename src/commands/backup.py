@@ -91,10 +91,10 @@ async def server(interaction: discord.Interaction, server: str,
                         if name is not None else '') + timestamp(dt)
 
     try:
-        await backup_server(server, archive_filename)
+        await backup_server(config.servers[server], archive_filename)
 
         embed = discord.Embed(
-            description=f'Backed up all servers to \"{name}\".zip files')
+            description=f'Backed up {server} to \"{archive_filename}\".zip files')
     except:
         embed = discord.Embed(description=f'Backup failed')
 
