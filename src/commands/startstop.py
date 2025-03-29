@@ -39,7 +39,7 @@ async def start_all(interaction: discord.Interaction):
     for server in config.servers:
         start_orphan_server(config.servers[server])
     embed = discord.Embed(description='Started all servers')
-    embed.set_footer(config.server_name)
+    embed.set_footer(text=config.server_name)
     await interaction.response.send_message(embed=embed)
 
 
@@ -51,11 +51,11 @@ async def start_server(interaction: discord.Interaction, server: str):
         start_orphan_server(config.servers[server])
         embed = discord.Embed(
             description=f'Started {config.servers[server].name}')
-        embed.set_footer(config.server_name)
+        embed.set_footer(text=config.server_name)
         await interaction.response.send_message(embed=embed)
     else:
         embed = discord.Embed(description='Server not found')
-        embed.set_footer(config.server_name)
+        embed.set_footer(text=config.server_name)
         await interaction.response.send_message(embed=embed, ephemeral=True)
 
 
@@ -79,11 +79,11 @@ async def stop_all(interaction: discord.Interaction):
     for server in config.servers:
         kill_server(config.servers[server])
     embed = discord.Embed(description='Stopped all servers')
-    embed.set_footer(config.server_name)
+    embed.set_footer(text=config.server_name)
     await interaction.response.send_message(embed=embed)
 
 
-@stop.command(name="stop", description='Stop a Minecraft server')
+@stop.command(name="server", description='Stop a Minecraft server')
 @app_commands.checks.has_role(config.roles.admin)
 @app_commands.describe(server='A Minecraft server')
 async def stop_server(interaction: discord.Interaction, server: str):
@@ -91,11 +91,11 @@ async def stop_server(interaction: discord.Interaction, server: str):
         kill_server(config.servers[server])
         embed = discord.Embed(
             description=f'Stopped {config.servers[server].name}')
-        embed.set_footer(config.server_name)
+        embed.set_footer(text=config.server_name)
         await interaction.response.send_message(embed=embed)
     else:
         embed = discord.Embed(description='Server not found')
-        embed.set_footer(config.server_name)
+        embed.set_footer(text=config.server_name)
         await interaction.response.send_message(embed=embed, ephemeral=True)
 
 
