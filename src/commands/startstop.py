@@ -22,16 +22,16 @@ signal.signal(signal.SIGCHLD, signal.SIG_IGN)
 
 
 def start_orphan_server(id: str, server: Config.Server):
-    subprocess.Popen(['screen', '-D', '-R', '-S', id])
-    subprocess.Popen(['screen', '-D', id])
+    # subprocess.Popen(['screen', '-D', '-R', '-S', id])
+    # subprocess.Popen(['screen', '-D', '-S', id])
     subprocess.Popen([
         'screen', '-S', id, '-X', 'stuff',
-        f'cd {os.path.join(Path.home(), server.path)}'
+        f'cd {os.path.join(Path.home(), server.path)}\n'
     ])
     subprocess.Popen([
         'screen', '-S', id, '-X', 'stuff',
         f'java -Xms{server.ram}M -Xmx{server.ram}M {" ".join(server.flags)} ' +
-        f'-jar {server.server_jar} --nogui'
+        f'-jar {server.server_jar} --nogui\n'
     ])
     # subprocess.Popen([
     #     'java', f'-Xms{server.ram}M', f'-Xmx{server.ram}M', *server.flags,
