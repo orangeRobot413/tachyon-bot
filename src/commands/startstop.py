@@ -25,7 +25,7 @@ def start_orphan_server(server: Config.Server):
     subprocess.Popen([
         'java', f'-Xms{server.ram}M', f'-Xmx{server.ram}M', *server.flags,
         '-jar', os.path.join(Path.home(), server.path, server.server_jar), '--nogui'
-    ], close_fds=True)
+    ], close_fds=True, cwd=os.path.join(Path.home(), server.path))
 
 async def kill_server(server: Config.Server):
     await rcon(server.rcon.port, server.rcon.password, "stop")
