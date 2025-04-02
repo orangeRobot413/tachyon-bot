@@ -95,10 +95,10 @@ async def server(interaction: discord.Interaction, server: str,
     try:
         await backup_server(config.servers[server], archive_filename)
         embed.description = f'Backed up {server} to file `{archive_filename}.zip`'
-        interaction.edit_original_response(embed=embed)
+        await interaction.edit_original_response(embed=embed)
     except:
         embed.description = f'Backup failed'
-        interaction.edit_original_response(embed=embed)
+        await interaction.edit_original_response(embed=embed)
 
 @server.autocomplete('server')
 async def _(
