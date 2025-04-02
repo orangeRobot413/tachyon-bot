@@ -158,15 +158,13 @@ async def _(interaction: discord.Interaction):
         except:
             print(f'\x1b[31m\x1b[9m{filename}\x1b[0m')
 
-    msg = await interaction.original_response()
-
     embed.description = 'Syncing commands...'
-    await msg.edit(embed=embed)
+    await interaction.edit_original_response(embed=embed)
 
     await sync_commands()
 
     embed.description = 'Finished reloading commands'
-    await msg.edit(embed=embed)
+    await interaction.edit_original_response(embed=embed)
 
 
 client.tree.add_command(reload)
