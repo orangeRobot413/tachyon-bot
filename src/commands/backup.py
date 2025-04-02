@@ -34,6 +34,7 @@ async def backup_server(server: Config.Server, filename: Optional[str] = None) -
     shutil.make_archive(archive_path, 'zip', os.path.join(Path.home(), server.path), 'world')
 
     try:
+        await rcon(server.rcon.port, server.rcon.password, 'say Backup complete.')
         await rcon(server.rcon.port, server.rcon.password, 'save-on')
     except:
         pass
@@ -48,10 +49,14 @@ backup = app_commands.Group(name='backup', description='Backup server(s)')
 @app_commands.describe(name='Backup name')
 async def _(interaction: discord.Interaction, name: Optional[str]):
     dt = datetime.now(timezone.utc)
-    archive_filename = (re.sub(r'\s+', '_', name) + '-'
+    archive_filename = (re.sub(r'\s+|-', '_', name) + '-'
                         if name is not None else '') + timestamp(dt)
 
     fail = []
+
+    embed = discord.Embed(description=f'Backing up all servers to `{archive_filename}.zip` files')
+    embed.set_footer(text=config.server_name)
+    await interaction.response.send_message(embed=embed)
 
     for server in config.servers:
         try:
@@ -60,18 +65,13 @@ async def _(interaction: discord.Interaction, name: Optional[str]):
             fail.append(server)
 
     if len(fail) > 0:
-        embed = discord.Embed(description='Unable to backup:')
+        embed.description = '**Unable to backup:**'
         for server in fail:
-            embed.description += f'\n**{server}**'
-        embed.set_footer(text=config.server_name)
+            embed.description += f'\n{server}'
     else:
-        embed = discord.Embed(
-            description=
-            f'Backed up all servers to \"{archive_filename}\".zip files')
-        embed.set_footer(text=config.server_name)
-
-    await interaction.response.send_message(embed=embed)
-
+        embed.description= f'Backed up all servers to `{archive_filename}.zip` files'
+    
+    await interaction.edit_original_response(embed=embed)
 
 @backup.command()
 @app_commands.checks.has_role(config.roles.admin)
@@ -81,26 +81,24 @@ async def server(interaction: discord.Interaction, server: str,
     if server not in config.servers:
         embed = discord.Embed(description=f'Server not found')
         embed.set_footer(text=config.server_name)
-
         await interaction.response.send_message(embed=embed, ephemeral=True)
         return
     
     dt = datetime.now(timezone.utc)
     archive_filename = (re.sub(r'\s+', '_', name) + '-'
                         if name is not None else '') + timestamp(dt)
+    
+    embed = discord.Embed(description=f'Backing up {server} to file `{archive_filename}.zip`')
+    embed.set_footer(text=config.server_name)
+    await interaction.response.send_message(embed=embed)
 
     try:
         await backup_server(config.servers[server], archive_filename)
-
-        embed = discord.Embed(
-            description=f'Backed up {server} to \"{archive_filename}\".zip files')
+        embed.description = f'Backed up {server} to file `{archive_filename}.zip`'
+        interaction.edit_original_response(embed=embed)
     except:
-        embed = discord.Embed(description=f'Backup failed')
-
-    embed.set_footer(text=config.server_name)
-
-    await interaction.response.send_message(embed=embed)
-
+        embed.description = f'Backup failed'
+        interaction.edit_original_response(embed=embed)
 
 @server.autocomplete('server')
 async def _(
