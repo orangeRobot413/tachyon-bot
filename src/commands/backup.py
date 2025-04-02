@@ -39,7 +39,6 @@ async def backup_server(server: Config.Server, filename: Optional[str] = None) -
     except:
         pass
 
-
 # MARK: Command
 backup = app_commands.Group(name='backup', description='Backup server(s)')
 
@@ -85,7 +84,7 @@ async def server(interaction: discord.Interaction, server: str,
         return
     
     dt = datetime.now(timezone.utc)
-    archive_filename = (re.sub(r'\s+', '_', name) + '-'
+    archive_filename = (re.sub(r'\s+|-', '_', name) + '-'
                         if name is not None else '') + timestamp(dt)
     
     embed = discord.Embed(description=f'Backing up {server} to file `{archive_filename}.zip`')
